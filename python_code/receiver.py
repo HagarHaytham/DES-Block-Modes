@@ -1,0 +1,21 @@
+import zmq
+import random
+import sys
+import time
+
+port = "5556"
+context = zmq.Context()
+socket = context.socket(zmq.PAIR)
+socket.connect("tcp://localhost:%s" % port)
+
+msg = socket.recv()
+block_mode =  int(msg)
+print ("Received Block Mode No. ",block_mode)
+
+
+# while True:
+#     msg = socket.recv()
+#     print (msg)
+#     socket.send_string("client message to server1")
+#     socket.send_string("client message to server2")
+#     time.sleep(1)
