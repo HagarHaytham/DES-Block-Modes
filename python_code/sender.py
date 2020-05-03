@@ -5,6 +5,7 @@ import time
 import os
 import errno
 import des_modes
+import common
 
 def readInfo(filepath):
     if not os.path.isfile(filepath):
@@ -21,17 +22,6 @@ def makeConnection(port ="5556"):
     socket.bind("tcp://*:%s" % port)
     return socket
 
-def getBlockMode(mode):
-    ModeOfOperation = None
-    if mode ==1:
-        ModeOfOperation = ECBBlockMode()
-    elif mode ==2:
-        ModeOfOperation = CBCBlockMode()
-    elif mode ==3:
-        ModeOfOperation = CFCBlockMode()
-    else:
-        ModeOfOperation = CTRBlockMode()
-    return ModeOfOperation
 
 def sendBlockMode(socket,mode):
     print("Sending Block Mode No. ",mode)

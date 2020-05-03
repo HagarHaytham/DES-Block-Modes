@@ -2,20 +2,30 @@ import zmq
 import random
 import sys
 import time
+import des_modes
+import common
 
-port = "5556"
-context = zmq.Context()
-socket = context.socket(zmq.PAIR)
-socket.connect("tcp://localhost:%s" % port)
+def makeConnection(port ="5556"):
+    context = zmq.Context()
+    socket = context.socket(zmq.PAIR)
+    socket.connect("tcp://localhost:%s" % port)
+    return socket
 
-msg = socket.recv()
-block_mode =  int(msg)
-print ("Received Block Mode No. ",block_mode)
+def receiveBlockMode(socket):
+    msg = socket.recv()
+    mode =  int(msg)
+    print ("Received Block Mode No. ",mode)
+    return mode
 
+def receiveCipheredText(socket):
+    cipheredText = socket.recv()
+    print("Received Ciphered message : ",cipheredText)
+    return cipheredText
 
-# while True:
-#     msg = socket.recv()
-#     print (msg)
-#     socket.send_string("client message to server1")
-#     socket.send_string("client message to server2")
-#     time.sleep(1)
+if __name__=="__main__":
+    socket = makeConnection()
+    blockMode = receiveBlockMode(socket)
+    ModeOfOperation = getBlockMode(blockMode)
+    cipheredText = receiveCipheredText(socket)
+    plainText = ModeOfOperation.decrypt(cipheredText)
+    print("The Plain Message is :",plainText)
