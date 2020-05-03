@@ -3,7 +3,7 @@ import random
 import sys
 import time
 import des_modes
-import common
+from common import getBlockMode,desKey
 
 def makeConnection(port ="5556"):
     context = zmq.Context()
@@ -19,13 +19,17 @@ def receiveBlockMode(socket):
 
 def receiveCipheredText(socket):
     cipheredText = socket.recv()
-    print("Received Ciphered message : ",cipheredText)
-    return cipheredText
+    msg = cipheredText.decode()
+    print("Received Ciphered message : ",msg)
+    print(type(msg))
+    return msg.encode('ISO-8859-1')
 
 if __name__=="__main__":
     socket = makeConnection()
     blockMode = receiveBlockMode(socket)
     ModeOfOperation = getBlockMode(blockMode)
     cipheredText = receiveCipheredText(socket)
-    plainText = ModeOfOperation.decrypt(cipheredText)
+    key = desKey
+    # ModeOfOperation.decrypt(key,cipheredText)
+    plainText = ModeOfOperation.decrypt(key,cipheredText)
     print("The Plain Message is :",plainText)

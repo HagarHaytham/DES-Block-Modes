@@ -5,12 +5,12 @@ import time
 import os
 import errno
 import des_modes
-import common
+from common import getBlockMode,desKey
 
 def readInfo(filepath):
-    if not os.path.isfile(filepath):
+    if not os.path.isfile(filepath,):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filepath)
-    with open (filepath) as f:
+    with open (filepath,'r') as f:
         lines =f.readlines()
     blockMode = int(lines[0])
     plainTextMsg = lines[1]
@@ -28,14 +28,18 @@ def sendBlockMode(socket,mode):
     socket.send_string(str(mode))
 
 def sendCipheredText(socket,msg):
-    print("Sending Ciphered message : ",msg)
-    socket.send_string(str(msg))
+    print(type(msg))
+    print("Sending Ciphered message : ",msg.decode('ISO-8859-1'))
+    socket.send_string(str(msg.decode('ISO-8859-1')))
 
 if __name__ =="__main__":
     blockMode,plainTextMsg = readInfo('../testcases/1.txt')
     socket = makeConnection()
     print("Plain Text: ",plainTextMsg)
+    sendBlockMode(socket,blockMode)
     ModeOfOperation = getBlockMode(blockMode)
-    messageBlocks= ModeOfOperation.splitAndPad(plainTextMsg)
-    cipherText=ModeOfOperation.encrypt(messageBlocks)
+    plainTextMsg = ModeOfOperation.pad(plainTextMsg)
+    messageBlocks= ModeOfOperation.split(plainTextMsg)
+    key = desKey #########################
+    cipherText=ModeOfOperation.encrypt(key,messageBlocks)
     sendCipheredText(socket,cipherText)
