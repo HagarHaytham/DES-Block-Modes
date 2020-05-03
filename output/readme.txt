@@ -1,0 +1,1 @@
+The obtained Plain text
