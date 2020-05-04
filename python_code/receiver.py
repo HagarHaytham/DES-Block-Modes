@@ -21,7 +21,6 @@ def receiveCipheredText(socket):
     cipheredText = socket.recv()
     msg = cipheredText.decode()
     print("Received Ciphered message : ",msg)
-    print(type(msg))
     return msg.encode('ISO-8859-1')
 
 if __name__=="__main__":

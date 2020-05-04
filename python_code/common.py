@@ -1,6 +1,8 @@
 import des_modes
 
-desKey = b'dummyOne' #########################
+desKey = b'dummyKey' 
+iv =b'dummy iv'
+
 def getBlockMode(mode):
     ModeOfOperation = None
     if mode ==1:
