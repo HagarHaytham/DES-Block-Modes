@@ -31,7 +31,7 @@ def sendCipheredText(socket,msg):
     socket.send_string(str(msg.decode('ISO-8859-1')))
 
 if __name__ =="__main__":
-    blockMode,plainTextMsg = readInfo('../testcases/2.txt')
+    blockMode,plainTextMsg = readInfo('../testcases/4.txt')
     socket = makeConnection()
     print("Plain Text: ",plainTextMsg)
     sendBlockMode(socket,blockMode)

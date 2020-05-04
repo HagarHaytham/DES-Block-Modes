@@ -36,6 +36,8 @@ class BlockMode:
         print(len(bytesMsg))
         return bytesMsg
 
+    def byteXOR(self,block1, block2):
+        return bytes([a ^ b for a, b in zip(block1, block2)])
 
     def encrypt(self,key,messageBlocks):
         pass
@@ -48,8 +50,6 @@ class ECBBlockMode(BlockMode):
         ciphered = b''
         des = DES.new(key, DES.MODE_ECB)
         for block in messageBlocks:
-            # print(type(block))
-            # print(type(block.encode))
             ciphered += des.encrypt(block.encode())
         return ciphered
 
@@ -67,16 +67,13 @@ class ECBBlockMode(BlockMode):
 
 class CBCBlockMode(BlockMode):
 
-    def byteXOR(self,block1, block2):
-        return bytes([a ^ b for a, b in zip(block1, block2)])
-
     def encrypt(self,key,messageBlocks):
         ciphered = b''
         bytesBlocks = [block.encode() for block in messageBlocks] 
         prevCipher = iv
         des = DES.new(key, DES.MODE_ECB)
         for block in bytesBlocks:
-            xoredBlock = self.byteXOR(prevCipher,block)
+            xoredBlock = super().byteXOR(prevCipher,block)
             prevCipher = des.encrypt(xoredBlock)
             ciphered += prevCipher
         return ciphered
@@ -88,7 +85,7 @@ class CBCBlockMode(BlockMode):
         prevCipher = iv
         for block in blocks:
             decrypted = des.decrypt(block)
-            original = self.byteXOR(prevCipher,decrypted)
+            original = super().byteXOR(prevCipher,decrypted)
             originalText += original
             prevCipher = block
         originalText = originalText.decode()
@@ -104,8 +101,34 @@ class CFCBlockMode(BlockMode):
         pass
 
 class CTRBlockMode(BlockMode):
+    def __init__(self):
+        self.counter =0
+
+    def CounterInc (self):
+        self.counter +=1
+        strCounter = str(self.counter)
+        k = len(strCounter)
+        padCounter = (blocksize - k) * '0' 
+        Counter = padCounter + strCounter
+        return Counter.encode()
 
     def encrypt(self,key,messageBlocks):
-        pass
+        bytesBlocks = [block.encode() for block in messageBlocks]
+        ciphered = b''
+        des = DES.new(key, DES.MODE_ECB)
+        for block in bytesBlocks:
+            cnt = self.CounterInc()
+            cntEnc = des.encrypt(cnt)
+            ciphered += super().byteXOR(cntEnc,block)
+        return ciphered
+
     def decrypt(self,key,cipherText):
-        pass
+        blocks = super().split(cipherText)
+        originalText =b''
+        des = DES.new(key, DES.MODE_ECB)
+        for block in blocks:
+            cnt = self.CounterInc()
+            cntEnc = des.encrypt(cnt)
+            originalText += super().byteXOR(cntEnc,block)
+        originalText = originalText.decode()
+        return originalText

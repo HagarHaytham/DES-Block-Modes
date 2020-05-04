@@ -36,4 +36,4 @@ if __name__=="__main__":
     print("The Plain Message is :",plainText)
     plainText = ModeOfOperation.removePad(plainText)
     print("The Plain Message without padding is :",plainText)
-    writeOutput('../output/2.txt',plainText)
+    writeOutput('../output/4.txt',plainText)
