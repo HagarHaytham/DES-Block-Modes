@@ -10,7 +10,9 @@ def makeConnection(port ="5556"):
     socket = context.socket(zmq.PAIR)
     socket.connect("tcp://localhost:%s" % port)
     return socket
-
+def writeOutput(filepath,msg):
+     with open (filepath,'w') as f:
+         f.write(msg)
 def receiveBlockMode(socket):
     msg = socket.recv()
     mode =  int(msg)
@@ -32,3 +34,6 @@ if __name__=="__main__":
     # ModeOfOperation.decrypt(key,cipheredText)
     plainText = ModeOfOperation.decrypt(key,cipheredText)
     print("The Plain Message is :",plainText)
+    plainText = ModeOfOperation.removePad(plainText)
+    print("The Plain Message without padding is :",plainText)
+    writeOutput('../output/2.txt',plainText)

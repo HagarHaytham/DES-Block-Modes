@@ -7,9 +7,12 @@ class BlockMode:
     def __init__(self):
         pass
     
+    def removePad(self,msg):
+        return msg.replace('~','')
+
     def pad(self,msg,blockSize=blocksize):
         padLen = blockSize - len(msg)%blockSize
-        msg += padLen * '_'
+        msg += padLen * '~'
         return msg
     def split(self,msg,blockSize=blocksize):
         blocks =[]

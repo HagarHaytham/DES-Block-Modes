@@ -37,6 +37,7 @@ if __name__ =="__main__":
     sendBlockMode(socket,blockMode)
     ModeOfOperation = getBlockMode(blockMode)
     plainTextMsg = ModeOfOperation.pad(plainTextMsg)
+    print("Padded Message:",plainTextMsg)
     messageBlocks= ModeOfOperation.split(plainTextMsg)
     key = desKey #########################
     cipherText=ModeOfOperation.encrypt(key,messageBlocks)
