@@ -31,6 +31,8 @@ class BlockMode:
 class ECBBlockMode(BlockMode):
 
     def encrypt(self,key,plainTextMsg):
+        plainTextMsg = super().pad(plainTextMsg)
+        print("Padded Message:",plainTextMsg)
         messageBlocks = super().split(plainTextMsg)
         ciphered = b''
         des = DES.new(key, DES.MODE_ECB)
@@ -53,6 +55,8 @@ class ECBBlockMode(BlockMode):
 class CBCBlockMode(BlockMode):
 
     def encrypt(self,key,plainTextMsg):
+        plainTextMsg = super().pad(plainTextMsg)
+        print("Padded Message:",plainTextMsg)
         messageBlocks= super().split(plainTextMsg)
         ciphered = b''
         bytesBlocks = [block.encode() for block in messageBlocks] 
@@ -84,6 +88,8 @@ class CFCBlockMode(BlockMode):
         self.S = 2
 
     def encrypt(self,key,plainTextMsg):
+        plainTextMsg = super().pad(plainTextMsg) # pad with original block size
+        print("Padded Message:",plainTextMsg)
         messageBlocks= super().split(plainTextMsg,self.S)
         bytesBlocks = [block.encode() for block in messageBlocks]
         IVshiftRegister = iv
@@ -133,6 +139,8 @@ class CTRBlockMode(BlockMode):
         return Counter.encode()
 
     def encrypt(self,key,plainTextMsg):
+        plainTextMsg = super().pad(plainTextMsg)
+        print("Padded Message:",plainTextMsg)
         messageBlocks= super().split(plainTextMsg)
         bytesBlocks = [block.encode() for block in messageBlocks]
         ciphered = b''

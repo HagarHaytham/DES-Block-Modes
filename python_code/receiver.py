@@ -1,7 +1,4 @@
 import zmq
-import random
-import sys
-import time
 import des_modes
 from common import getBlockMode,desKey,secret
 from Crypto.Hash import HMAC, SHA256,CMAC
@@ -32,7 +29,7 @@ def receiveCipheredText(socket):
     msg = msgciphered.encode('ISO-8859-1')
     mac = socket.recv()
     print("MAC", mac)
-    verifyCMAC(mac,msg)
+    verifyHMAC(mac,msg)
     return  msgciphered,msg
 
 def verifyHMAC(mac,msg):
@@ -41,9 +38,9 @@ def verifyHMAC(mac,msg):
     h.update(msg)
     try:
         h.hexverify(mac)
-        print("The message '%s' is authentic" % msg)
+        print("The message is AUTHENTICATED" )
     except ValueError:
-        print("The message or the key is wrong")
+        print("The message or the key is WRONG")
 
 def verifyCMAC(mac,msg):
     c = CMAC.new(secret, ciphermod=DES)
@@ -51,14 +48,14 @@ def verifyCMAC(mac,msg):
     c.update(msg)
     try:
         c.verify(mac)
-        print("The message '%s' is authentic" % msg)
+        print("The message is AUTHENTICATED" )
     except ValueError:
-        print("The message or the key is wrong")
+        print("The message or the key is WRONG")
 
 
 
 if __name__=="__main__":
-    filename = '../output/1.txt'
+    filename = '../output/4.txt'
     socket = makeConnection()
     blockMode = receiveBlockMode(socket)
     ModeOfOperation = getBlockMode(blockMode)

@@ -1,13 +1,9 @@
 import zmq
-import random
-import sys
-import time
 import os
 import errno
 import des_modes
 from common import getBlockMode,desKey,secret
 from Crypto.Hash import HMAC, SHA256,CMAC
-import time
 from Crypto.Cipher import DES
  
 
@@ -33,7 +29,7 @@ def sendBlockMode(socket,mode):
 def sendCipheredText(socket,msg):
     print("Sending Ciphered message : ",msg.decode('ISO-8859-1'))
     socket.send_string(str(msg.decode('ISO-8859-1')))
-    mac = getCMAC(msg)
+    mac = getHMAC(msg)
     socket.send_string(str(mac))
 
 
@@ -50,14 +46,12 @@ def getCMAC(msg):
     return  cobj.hexdigest()
 
 if __name__ =="__main__":
-    filename = '../testcases/1.txt'
+    filename = '../testcases/4.txt'
     blockMode,plainTextMsg = readInfo(filename)
     socket = makeConnection()
     print("Plain Text: ",plainTextMsg)
     sendBlockMode(socket,blockMode)
     ModeOfOperation = getBlockMode(blockMode)
-    plainTextMsg = ModeOfOperation.pad(plainTextMsg)
-    print("Padded Message:",plainTextMsg)
     key = desKey 
     cipherText=ModeOfOperation.encrypt(key,plainTextMsg)
     sendCipheredText(socket,cipherText)
