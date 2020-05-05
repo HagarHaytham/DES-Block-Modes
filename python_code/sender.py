@@ -7,6 +7,7 @@ import errno
 import des_modes
 from common import getBlockMode,desKey,secret
 from Crypto.Hash import HMAC, SHA256
+import time
 
 def readInfo(filepath):
     if not os.path.isfile(filepath,):
@@ -48,7 +49,6 @@ if __name__ =="__main__":
     ModeOfOperation = getBlockMode(blockMode)
     plainTextMsg = ModeOfOperation.pad(plainTextMsg)
     print("Padded Message:",plainTextMsg)
-    # messageBlocks= ModeOfOperation.split(plainTextMsg)
-    key = desKey #########################
+    key = desKey 
     cipherText=ModeOfOperation.encrypt(key,plainTextMsg)
     sendCipheredText(socket,cipherText)
