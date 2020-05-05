@@ -3,7 +3,9 @@ import random
 import sys
 import time
 import des_modes
-from common import getBlockMode,desKey
+from common import getBlockMode,desKey,secret
+from Crypto.Hash import HMAC, SHA256
+
 
 def makeConnection(port ="5556"):
     context = zmq.Context()
@@ -25,7 +27,21 @@ def receiveCipheredText(socket):
     cipheredText = socket.recv()
     msg = cipheredText.decode()
     print("Received Ciphered message : ",msg)
-    return msg.encode('ISO-8859-1')
+    msg = msg.encode('ISO-8859-1')
+    mac = socket.recv()
+    print("MAC", mac)
+    verifyHMAC(mac,msg)
+    return  msg
+
+def verifyHMAC(mac,msg):
+    h = HMAC.new(secret, digestmod=SHA256)
+    # msg = b'ppp'
+    h.update(msg)
+    try:
+        h.hexverify(mac)
+        print("The message '%s' is authentic" % msg)
+    except ValueError:
+        print("The message or the key is wrong")
 
 if __name__=="__main__":
     socket = makeConnection()
@@ -37,4 +53,4 @@ if __name__=="__main__":
     print("The Plain Message is :",plainText)
     plainText = ModeOfOperation.removePad(plainText)
     print("The Plain Message without padding is :",plainText)
-    writeOutput('../output/3.txt',plainText)
+    writeOutput('../output/1.txt',plainText)

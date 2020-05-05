@@ -5,7 +5,8 @@ import time
 import os
 import errno
 import des_modes
-from common import getBlockMode,desKey
+from common import getBlockMode,desKey,secret
+from Crypto.Hash import HMAC, SHA256
 
 def readInfo(filepath):
     if not os.path.isfile(filepath,):
@@ -29,9 +30,18 @@ def sendBlockMode(socket,mode):
 def sendCipheredText(socket,msg):
     print("Sending Ciphered message : ",msg.decode('ISO-8859-1'))
     socket.send_string(str(msg.decode('ISO-8859-1')))
+    mac = getHMAC(msg)
+    socket.send_string(str(mac))
+
+
+def getHMAC(msg):
+    h = HMAC.new(secret, digestmod=SHA256)
+    h.update(msg)
+    print("MAC",h.hexdigest())
+    return h.hexdigest()
 
 if __name__ =="__main__":
-    blockMode,plainTextMsg = readInfo('../testcases/3.txt')
+    blockMode,plainTextMsg = readInfo('../testcases/1.txt')
     socket = makeConnection()
     print("Plain Text: ",plainTextMsg)
     sendBlockMode(socket,blockMode)
