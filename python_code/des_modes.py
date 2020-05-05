@@ -1,6 +1,5 @@
 from Crypto.Cipher import DES
 from common import iv
-import struct
 
 blocksize = 8
 class BlockMode:   

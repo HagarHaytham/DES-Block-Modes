@@ -4,7 +4,8 @@ import sys
 import time
 import des_modes
 from common import getBlockMode,desKey,secret
-from Crypto.Hash import HMAC, SHA256
+from Crypto.Hash import HMAC, SHA256,CMAC
+from Crypto.Cipher import DES
 
 
 def makeConnection(port ="5556"):
@@ -13,8 +14,9 @@ def makeConnection(port ="5556"):
     socket.connect("tcp://localhost:%s" % port)
     return socket
 
-def writeOutput(filepath,msg):
-     with open (filepath,'w') as f:
+def writeOutput(filepath,cipheredText,msg):
+     with open (filepath,'w',encoding="utf-8") as f:
+         f.write(cipheredText+'\n')
          f.write(msg)
 
 def receiveBlockMode(socket):
@@ -25,13 +27,13 @@ def receiveBlockMode(socket):
 
 def receiveCipheredText(socket):
     cipheredText = socket.recv()
-    msg = cipheredText.decode()
-    print("Received Ciphered message : ",msg)
-    msg = msg.encode('ISO-8859-1')
+    msgciphered = cipheredText.decode()
+    print("Received Ciphered message : ",msgciphered)
+    msg = msgciphered.encode('ISO-8859-1')
     mac = socket.recv()
     print("MAC", mac)
-    verifyHMAC(mac,msg)
-    return  msg
+    verifyCMAC(mac,msg)
+    return  msgciphered,msg
 
 def verifyHMAC(mac,msg):
     h = HMAC.new(secret, digestmod=SHA256)
@@ -43,14 +45,27 @@ def verifyHMAC(mac,msg):
     except ValueError:
         print("The message or the key is wrong")
 
+def verifyCMAC(mac,msg):
+    c = CMAC.new(secret, ciphermod=DES)
+    # msg = b'ppp'
+    c.update(msg)
+    try:
+        c.verify(mac)
+        print("The message '%s' is authentic" % msg)
+    except ValueError:
+        print("The message or the key is wrong")
+
+
+
 if __name__=="__main__":
+    filename = '../output/1.txt'
     socket = makeConnection()
     blockMode = receiveBlockMode(socket)
     ModeOfOperation = getBlockMode(blockMode)
-    cipheredText = receiveCipheredText(socket)
+    msgciphered,cipheredText = receiveCipheredText(socket)
     key = desKey
     plainText = ModeOfOperation.decrypt(key,cipheredText)
     print("The Plain Message is :",plainText)
     plainText = ModeOfOperation.removePad(plainText)
     print("The Plain Message without padding is :",plainText)
-    writeOutput('../output/1.txt',plainText)
+    writeOutput(filename,msgciphered,plainText)

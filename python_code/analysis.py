@@ -26,7 +26,6 @@ labels = ['ECB', 'CBC','CFB','CTR']
 gap = .8 / len(data)
 for i, row in enumerate(data):
   X = np.arange(len(row))
-  print(len(row))
   plt.bar(X + i * gap, row,
     width = gap,
     color = color_list[i % len(color_list)],

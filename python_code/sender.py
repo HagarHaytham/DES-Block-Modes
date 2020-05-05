@@ -6,8 +6,10 @@ import os
 import errno
 import des_modes
 from common import getBlockMode,desKey,secret
-from Crypto.Hash import HMAC, SHA256
+from Crypto.Hash import HMAC, SHA256,CMAC
 import time
+from Crypto.Cipher import DES
+ 
 
 def readInfo(filepath):
     if not os.path.isfile(filepath,):
@@ -31,7 +33,7 @@ def sendBlockMode(socket,mode):
 def sendCipheredText(socket,msg):
     print("Sending Ciphered message : ",msg.decode('ISO-8859-1'))
     socket.send_string(str(msg.decode('ISO-8859-1')))
-    mac = getHMAC(msg)
+    mac = getCMAC(msg)
     socket.send_string(str(mac))
 
 
@@ -41,8 +43,15 @@ def getHMAC(msg):
     print("MAC",h.hexdigest())
     return h.hexdigest()
 
+def getCMAC(msg):
+    cobj = CMAC.new(secret, ciphermod=DES)
+    cobj.update(msg)
+    print( cobj.hexdigest())
+    return  cobj.hexdigest()
+
 if __name__ =="__main__":
-    blockMode,plainTextMsg = readInfo('../testcases/1.txt')
+    filename = '../testcases/1.txt'
+    blockMode,plainTextMsg = readInfo(filename)
     socket = makeConnection()
     print("Plain Text: ",plainTextMsg)
     sendBlockMode(socket,blockMode)

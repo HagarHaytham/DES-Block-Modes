@@ -2,7 +2,7 @@ import des_modes
 
 desKey = b'dummyKey' 
 iv =b'dummy iv'
-secret = b'Swordfish'
+secret = b'Swordfis'
 
 def getBlockMode(mode):
     ModeOfOperation = None
