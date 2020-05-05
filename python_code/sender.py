@@ -27,16 +27,18 @@ def sendBlockMode(socket,mode):
     socket.send_string(str(mode))
 
 def sendCipheredText(socket,msg):
-    print("Sending Ciphered message : ",msg.decode('ISO-8859-1'))
-    socket.send_string(str(msg.decode('ISO-8859-1')))
+    msgstr = msg.decode('ISO-8859-1')
+    print("Ciphered message :",msgstr)
     mac = getHMAC(msg)
-    socket.send_string(str(mac))
-
+    print("MAC :",mac)
+    msg_mac = msgstr +'(&)'+mac
+    # print("Ciphered msg + MAC:",msg_mac)
+    socket.send_string(str(msg_mac))
 
 def getHMAC(msg):
     h = HMAC.new(secret, digestmod=SHA256)
     h.update(msg)
-    print("MAC",h.hexdigest())
+    # print("MAC",h.hexdigest())
     return h.hexdigest()
 
 def getCMAC(msg):
@@ -46,7 +48,7 @@ def getCMAC(msg):
     return  cobj.hexdigest()
 
 if __name__ =="__main__":
-    filename = '../testcases/4.txt'
+    filename = '../testcases/3.txt'
     blockMode,plainTextMsg = readInfo(filename)
     socket = makeConnection()
     print("Plain Text: ",plainTextMsg)
