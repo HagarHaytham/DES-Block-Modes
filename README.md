@@ -1,7 +1,7 @@
 # DES-Block-Modes
-Two parties communciacting through sockets using [ZMQ](https://pyzmq.readthedocs.io/en/latest/api/index.html)
-The sender sends an encrypted message associated with its mac for authentication
-The receiver decryptes the message and verifies it using the mac received.
+Two parties communciacting through sockets using [ZMQ](https://pyzmq.readthedocs.io/en/latest/api/index.html) <br>
+The sender sends an encrypted message associated with its mac for authentication. <br>
+The receiver decryptes the message and verifies it using the mac received. <br>
 
 Implementing the following modes of operation of [DES](https://pycryptodome.readthedocs.io/en/latest/src/cipher/des.html)
 * Electronic Codebook (ECB)
