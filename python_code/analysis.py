@@ -14,8 +14,9 @@ for mode in modes:
     ModeOfOperation = getBlockMode(mode)
     for block in Nblocks:
         msg = block * one_block
+        # plainTextMsg = ModeOfOperation.pad(msg)
         start_time= time.time() #start timer
-        cipherText=ModeOfOperation.encrypt(desKey,plainTextMsg)
+        cipherText=ModeOfOperation.encrypt(desKey,msg)
         end_time= time.time() #end timer
         taken_time= end_time - start_time
         # print("Time:",taken_time)

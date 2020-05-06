@@ -3,6 +3,7 @@ import des_modes
 from common import getBlockMode,desKey,secret
 from Crypto.Hash import HMAC, SHA256,CMAC
 from Crypto.Cipher import DES
+import argparse
 
 
 def makeConnection(port ="5556"):
@@ -68,15 +69,19 @@ def verifyCMAC(mac,msg):
 
 
 if __name__=="__main__":
-    filename = '../output/3.txt'
+    # filename = '../output/3.txt'
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument(help='Output file name',dest='file_name')
+    args = my_parser.parse_args()
+    filename = args.file_name
+
     socket = makeConnection()
     blockMode = receiveBlockMode(socket)
     ModeOfOperation = getBlockMode(blockMode)
-    # receiveCipheredText(socket)
     msgciphered,cipheredText,auth = receiveCipheredText(socket)
     key = desKey
     plainText = ModeOfOperation.decrypt(key,cipheredText)
-    print("The Plain Message is :",plainText)
+    # print("The Plain Message is :",plainText)
     plainText = ModeOfOperation.removePad(plainText)
     print("The Plain Message without padding is :",plainText)
     writeOutput(filename,msgciphered,plainText,auth)

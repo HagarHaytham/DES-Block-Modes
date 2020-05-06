@@ -5,7 +5,8 @@ import des_modes
 from common import getBlockMode,desKey,secret
 from Crypto.Hash import HMAC, SHA256,CMAC
 from Crypto.Cipher import DES
- 
+import argparse
+
 
 def readInfo(filepath):
     if not os.path.isfile(filepath,):
@@ -48,7 +49,12 @@ def getCMAC(msg):
     return  cobj.hexdigest()
 
 if __name__ =="__main__":
-    filename = '../testcases/3.txt'
+    # filename = '../testcases/3.txt'
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument(help='Input file name',dest='file_name')
+    args = my_parser.parse_args()
+    filename = args.file_name
+
     blockMode,plainTextMsg = readInfo(filename)
     socket = makeConnection()
     print("Plain Text: ",plainTextMsg)
